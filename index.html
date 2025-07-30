@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Mini Fridge Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Side - Control Interface -->
+        <div class="control-panel">
+            <header class="panel-header">
+                <h1>Smart Fridge Manager</h1>
+                <div class="mode-selector">
+                    <button id="stockingModeBtn" class="btn btn-mode active">Stocking Mode</button>
+                    <button id="checkoutModeBtn" class="btn btn-mode">Checkout Mode</button>
+                </div>
+            </header>
+
+            <!-- Stocking Mode Interface -->
+            <div id="stockingMode" class="mode-interface active">
+                <div class="section">
+                    <h3>Stocking Options</h3>
+                    <div class="stocking-mode-selector">
+                        <button id="addStockBtn" class="btn btn-stocking-mode active">Add Stock</button>
+                        <button id="editStockBtn" class="btn btn-stocking-mode">Edit Stock</button>
+                    </div>
+                </div>
+
+                <!-- Add Stock Interface -->
+                <div id="addStockMode" class="stocking-interface active">
+                    <div class="section">
+                        <h3>Add Stock</h3>
+                        <div class="form-group">
+                            <label class="form-label" for="stockQuantity">Quantity to Add</label>
+                            <input type="number" id="stockQuantity" class="form-control" min="1" value="1" placeholder="Enter quantity first">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="stockBarcode">Barcode</label>
+                            <input type="text" id="stockBarcode" class="form-control" placeholder="Then scan or enter barcode">
+                        </div>
+                        <button id="addToFridgeBtn" class="btn btn--primary btn--full-width">Add to Fridge</button>
+                    </div>
+                </div>
+
+                <!-- Edit Stock Interface -->
+                <div id="editStockMode" class="stocking-interface">
+                    <div class="section">
+                        <h3>Edit Stock</h3>
+                        <div class="form-group">
+                            <label class="form-label" for="editBarcode">Barcode</label>
+                            <input type="text" id="editBarcode" class="form-control" placeholder="Scan product barcode">
+                        </div>
+                        <div id="editStockDetails" class="edit-details hidden">
+                            <div class="current-product-info">
+                                <div id="currentProductName" class="product-name"></div>
+                                <div id="currentProductDetails" class="product-details"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="newStockQuantity">New Stock Amount</label>
+                                <input type="number" id="newStockQuantity" class="form-control" min="0" placeholder="Enter new stock amount">
+                            </div>
+                            <button id="updateStockBtn" class="btn btn--primary btn--full-width">Update Stock</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Current Stock</h3>
+                    <div id="currentStock" class="stock-list"></div>
+                </div>
+            </div>
+
+            <!-- Checkout Mode Interface -->
+            <div id="checkoutMode" class="mode-interface">
+                <div class="section">
+                    <h3>User Authentication</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="badgeId">Badge ID</label>
+                        <input type="text" id="badgeId" class="form-control" placeholder="Scan badge (6 digits)" maxlength="6">
+                    </div>
+                    <div id="nameInputGroup" class="form-group hidden">
+                        <label class="form-label" for="userName">Your Name</label>
+                        <input type="text" id="userName" class="form-control" placeholder="Enter your name">
+                    </div>
+                    <div id="userWelcome" class="user-welcome hidden"></div>
+                </div>
+
+                <div class="section">
+                    <h3>Checkout Item</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="checkoutBarcode">Item Barcode</label>
+                        <input type="text" id="checkoutBarcode" class="form-control" placeholder="Scan item barcode">
+                    </div>
+                    <button id="checkoutItemBtn" class="btn btn--primary btn--full-width" disabled>Checkout Item</button>
+                </div>
+
+                <div class="section">
+                    <h3>Recent Transactions</h3>
+                    <div id="recentTransactions" class="transaction-list"></div>
+                </div>
+            </div>
+
+            <!-- Data Management Section -->
+            <div class="section">
+                <h3>Data Management</h3>
+                <div class="btn-group">
+                    <button id="exportDataBtn" class="btn btn--outline">Export Data</button>
+                    <button id="importDataBtn" class="btn btn--outline">Import Data</button>
+                </div>
+                <button id="clearDataBtn" class="btn btn--outline" style="margin-top: 8px; width: 100%;">Clear All Data</button>
+                <input type="file" id="importFile" accept=".json" class="hidden">
+            </div>
+
+            <!-- User Profile Section -->
+            <div class="section">
+                <h3>User Profile</h3>
+                <button id="viewHistoryBtn" class="btn btn--secondary btn--full-width" disabled>View My History</button>
+            </div>
+        </div>
+
+        <!-- Right Side - Visual Fridge Display -->
+        <div class="fridge-display">
+            <div class="fridge-container">
+                <div class="fridge-header">
+                    <h2>Mini Fridge Contents</h2>
+                </div>
+                <div class="fridge-interior">
+                    <div class="shelf" data-shelf="1">
+                        <div class="shelf-label">Shelf 1</div>
+                        <div class="shelf-contents"></div>
+                    </div>
+                    <div class="shelf" data-shelf="2">
+                        <div class="shelf-label">Shelf 2</div>
+                        <div class="shelf-contents"></div>
+                    </div>
+                    <div class="shelf" data-shelf="3">
+                        <div class="shelf-label">Shelf 3</div>
+                        <div class="shelf-contents"></div>
+                    </div>
+                    <div class="shelf" data-shelf="4">
+                        <div class="shelf-label">Shelf 4</div>
+                        <div class="shelf-contents"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User History Modal -->
+    <div id="historyModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>My Drink History</h2>
+                <button id="closeHistoryModal" class="btn btn--outline">Close</button>
+            </div>
+            <div class="modal-body">
+                <div id="userHistoryContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div id="productDetailModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content product-detail-modal">
+            <div class="modal-header">
+                <h2 id="productDetailName">Product Details</h2>
+                <button id="closeProductDetailModal" class="btn btn--outline">Close</button>
+            </div>
+            <div class="modal-body">
+                <div class="product-detail-content">
+                    <div class="product-detail-main">
+                        <div class="product-image-section">
+                            <img id="productDetailImage" src="" alt="Product Image" class="product-detail-image">
+                            <div class="product-basic-info">
+                                <div id="productDetailBrand" class="product-brand"></div>
+                                <div id="productDetailCategory" class="product-category"></div>
+                                <div id="productDetailQuantity" class="product-quantity"></div>
+                            </div>
+                        </div>
+                        <div class="product-scores-section">
+                            <h3>Health & Quality Scores</h3>
+                            <div class="scores-grid">
+                                <div class="score-item">
+                                    <div class="score-label">Nutri-Score</div>
+                                    <div id="productNutriScore" class="score-value nutri-score">-</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-label">Processing Level (NOVA)</div>
+                                    <div id="productNovaGroup" class="score-value nova-score">-</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-label">Eco-Score</div>
+                                    <div id="productEcoScore" class="score-value eco-score">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="product-detail-tabs">
+                        <div class="tab-buttons">
+                            <button class="tab-btn active" data-tab="nutrition">Nutrition</button>
+                            <button class="tab-btn" data-tab="ingredients">Ingredients</button>
+                            <button class="tab-btn" data-tab="allergens">Allergens</button>
+                            <button class="tab-btn" data-tab="images">Images</button>
+                        </div>
+                        
+                        <div class="tab-content">
+                            <div id="nutritionTab" class="tab-panel active">
+                                <h3>Nutrition Facts (per 100g)</h3>
+                                <div id="nutritionTable" class="nutrition-table"></div>
+                            </div>
+                            
+                            <div id="ingredientsTab" class="tab-panel">
+                                <h3>Ingredients</h3>
+                                <div id="productIngredients" class="ingredients-text"></div>
+                            </div>
+                            
+                            <div id="allergensTab" class="tab-panel">
+                                <h3>Allergens & Traces</h3>
+                                <div id="productAllergens" class="allergens-content"></div>
+                                <div id="productTraces" class="traces-content"></div>
+                            </div>
+                            
+                            <div id="imagesTab" class="tab-panel">
+                                <h3>Product Images</h3>
+                                <div id="productImages" class="product-images-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden">
+        <div class="toast-content"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
