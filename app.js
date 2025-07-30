@@ -704,19 +704,13 @@ async function addToFridge() {
             Object.assign(existingItem, product, { quantity: existingItem.quantity });
             showToast(`Added ${quantity} more ${existingItem.name} to fridge (Total: ${existingItem.quantity})`, 'success');
         } else {
-            // Randomly select a shelf (1-4)
-            const randomShelf = Math.floor(Math.random() * 4) + 1;
-            const position = findAvailablePosition(randomShelf);
-            
             const newItem = {
                 ...product, // Include all enhanced product data
-                quantity: quantity,
-                shelf: randomShelf,
-                position: position
+                quantity: quantity
             };
             
             inventory.push(newItem);
-            showToast(`Added ${quantity} ${product.name} to shelf ${randomShelf}`, 'success');
+            showToast(`Added ${quantity} ${product.name} to fridge`, 'success');
         }
         
         stockBarcodeInput.value = '';
@@ -808,19 +802,6 @@ function updateStock() {
     
     // Save to localStorage after updating inventory
     saveToLocalStorage();
-}
-
-// Find available position on shelf
-function findAvailablePosition(shelf) {
-    const shelfItems = inventory.filter(item => item.shelf === shelf);
-    const usedPositions = shelfItems.map(item => item.position);
-    
-    for (let pos = 0; pos < 6; pos++) {
-        if (!usedPositions.includes(pos)) {
-            return pos;
-        }
-    }
-    return 0; // Default position
 }
 
 // Handle badge input
@@ -988,17 +969,17 @@ function updateStockDisplay() {
 
 // Update fridge display
 function updateFridgeDisplay() {
-    // Clear all shelves
-    for (let i = 1; i <= 4; i++) {
-        const shelf = document.querySelector(`[data-shelf="${i}"] .shelf-contents`);
-        if (shelf) shelf.innerHTML = '';
-    }
+    const fridgeContents = document.querySelector('.fridge-contents');
+    if (!fridgeContents) return;
     
-    // Add items to shelves
+    // Clear current contents
+    fridgeContents.innerHTML = '';
+    
+    // Remove all item count classes
+    fridgeContents.className = 'fridge-contents';
+    
+    // Add items to the fridge
     inventory.forEach(item => {
-        const shelf = document.querySelector(`[data-shelf="${item.shelf}"] .shelf-contents`);
-        if (!shelf) return;
-        
         const itemElement = document.createElement('div');
         itemElement.className = 'fridge-item item-added';
         
@@ -1006,17 +987,6 @@ function updateFridgeDisplay() {
         itemElement.style.cursor = 'pointer';
         itemElement.addEventListener('click', () => {
             showProductDetail(item);
-        });
-        
-        // Add hover effect
-        itemElement.addEventListener('mouseenter', () => {
-            itemElement.style.transform = 'scale(1.05)';
-            itemElement.style.boxShadow = 'var(--shadow-md)';
-        });
-        
-        itemElement.addEventListener('mouseleave', () => {
-            itemElement.style.transform = 'scale(1)';
-            itemElement.style.boxShadow = 'var(--shadow-sm)';
         });
         
         // Always use actual images - prioritize real URLs over data URIs
@@ -1039,15 +1009,27 @@ function updateFridgeDisplay() {
             <div class="quantity-badge">${item.quantity}</div>
         `;
         
-        shelf.appendChild(itemElement);
+        fridgeContents.appendChild(itemElement);
     });
     
-    // Add empty state for empty shelves
-    for (let i = 1; i <= 4; i++) {
-        const shelf = document.querySelector(`[data-shelf="${i}"] .shelf-contents`);
-        if (shelf && shelf.children.length === 0) {
-            shelf.innerHTML = '<div class="shelf-empty">Empty shelf</div>';
-        }
+    // Apply appropriate CSS class based on number of items
+    const itemCount = inventory.length;
+    if (itemCount === 0) {
+        fridgeContents.innerHTML = '<div class="fridge-empty">Your fridge is empty</div>';
+    } else if (itemCount === 1) {
+        fridgeContents.classList.add('items-1');
+    } else if (itemCount === 2) {
+        fridgeContents.classList.add('items-2');
+    } else if (itemCount === 3) {
+        fridgeContents.classList.add('items-3');
+    } else if (itemCount === 4) {
+        fridgeContents.classList.add('items-4');
+    } else if (itemCount === 5) {
+        fridgeContents.classList.add('items-5');
+    } else if (itemCount === 6) {
+        fridgeContents.classList.add('items-6');
+    } else {
+        fridgeContents.classList.add('items-many');
     }
 }
 

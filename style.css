@@ -1001,58 +1001,94 @@ select.form-control {
   height: calc(100% - 80px);
   padding: var(--space-16);
   background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-bg-4) 100%);
-}
-
-.shelf {
-  height: 25%;
-  margin-bottom: var(--space-16);
-  border: 2px dashed var(--color-border);
-  border-radius: var(--radius-base);
-  background: var(--color-surface);
-  position: relative;
   overflow: hidden;
 }
 
-.shelf:last-child {
-  margin-bottom: 0;
-}
-
-.shelf-label {
-  position: absolute;
-  top: var(--space-4);
-  left: var(--space-8);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-  background: var(--color-surface);
-  padding: var(--space-2) var(--space-6);
-  border-radius: var(--radius-sm);
-  z-index: 1;
-}
-
-.shelf-contents {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: var(--space-8);
-  padding: var(--space-32) var(--space-12) var(--space-8);
+.fridge-contents {
   height: 100%;
+  width: 100%;
+  display: grid;
+  gap: var(--space-8);
+  padding: var(--space-8);
+  overflow-y: auto;
+  /* Dynamic grid that adapts to number of items */
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: minmax(120px, auto);
   align-items: stretch;
 }
 
-/* Responsive grid adjustments for smaller screens */
-@media (max-width: 1024px) {
-  .shelf-contents {
-    grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
-    gap: var(--space-6);
-    padding: var(--space-24) var(--space-8) var(--space-6);
+/* Single item takes full space */
+.fridge-contents.items-1 {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+/* Two items stack vertically */
+.fridge-contents.items-2 {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+/* Three items: 2 on top, 1 on bottom */
+.fridge-contents.items-3 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.fridge-contents.items-3 .fridge-item:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+/* Four items: 2x2 grid */
+.fridge-contents.items-4 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+/* Five items: 2 on top, 2 in middle, 1 on bottom */
+.fridge-contents.items-5 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+}
+
+.fridge-contents.items-5 .fridge-item:nth-child(5) {
+  grid-column: 1 / -1;
+}
+
+/* Six items: 2x3 grid */
+.fridge-contents.items-6 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+}
+
+/* Seven or more items: default 2-column auto grid with scroll */
+.fridge-contents.items-many {
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: minmax(120px, auto);
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .fridge-contents {
+    gap: var(--space-4);
+    padding: var(--space-4);
+    grid-auto-rows: minmax(100px, auto);
+  }
+  
+  .fridge-contents.items-many {
+    grid-auto-rows: minmax(100px, auto);
   }
 }
 
-@media (max-width: 768px) {
-  .shelf-contents {
-    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-    gap: var(--space-4);
-    padding: var(--space-20) var(--space-6) var(--space-4);
+@media (max-width: 480px) {
+  .fridge-contents {
+    gap: var(--space-2);
+    padding: var(--space-2);
+    grid-auto-rows: minmax(80px, auto);
+  }
+  
+  .fridge-contents.items-many {
+    grid-auto-rows: minmax(80px, auto);
   }
 }
 
@@ -1063,7 +1099,7 @@ select.form-control {
   align-items: center;
   justify-content: center;
   position: relative;
-  padding: var(--space-8);
+  padding: var(--space-12);
   background: var(--color-surface);
   border-radius: var(--radius-base);
   border: 1px solid var(--color-border);
@@ -1071,33 +1107,111 @@ select.form-control {
   transition: all var(--duration-normal) var(--ease-standard);
   cursor: pointer;
   height: 100%;
-  min-height: 140px;
+  min-height: 120px;
 }
 
-/* Responsive item sizing for smaller screens */
-@media (max-width: 1024px) {
-  .fridge-item {
-    min-height: 120px;
-    padding: var(--space-6);
-  }
+/* When there's only one item, make it larger and more prominent */
+.fridge-contents.items-1 .fridge-item {
+  min-height: 300px;
+  padding: var(--space-24);
 }
 
+.fridge-contents.items-1 .fridge-item img {
+  width: 120px;
+  height: 180px;
+  margin-bottom: var(--space-16);
+}
+
+.fridge-contents.items-1 .fridge-item-name {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* For 2-3 items, make them medium sized */
+.fridge-contents.items-2 .fridge-item,
+.fridge-contents.items-3 .fridge-item {
+  min-height: 150px;
+  padding: var(--space-16);
+}
+
+.fridge-contents.items-2 .fridge-item img,
+.fridge-contents.items-3 .fridge-item img {
+  width: 80px;
+  height: 120px;
+  margin-bottom: var(--space-8);
+}
+
+.fridge-contents.items-2 .fridge-item-name,
+.fridge-contents.items-3 .fridge-item-name {
+  font-size: var(--font-size-lg);
+}
+
+/* Responsive sizing for smaller screens */
 @media (max-width: 768px) {
   .fridge-item {
     min-height: 100px;
-    padding: var(--space-4);
+    padding: var(--space-8);
+  }
+  
+  .fridge-contents.items-1 .fridge-item {
+    min-height: 250px;
+    padding: var(--space-20);
+  }
+  
+  .fridge-contents.items-1 .fridge-item img {
+    width: 100px;
+    height: 150px;
+    margin-bottom: var(--space-12);
+  }
+  
+  .fridge-contents.items-1 .fridge-item-name {
+    font-size: var(--font-size-xl);
+  }
+  
+  .fridge-contents.items-2 .fridge-item,
+  .fridge-contents.items-3 .fridge-item {
+    min-height: 120px;
+    padding: var(--space-12);
+  }
+  
+  .fridge-contents.items-2 .fridge-item img,
+  .fridge-contents.items-3 .fridge-item img {
+    width: 60px;
+    height: 90px;
+    margin-bottom: var(--space-6);
+  }
+  
+  .fridge-contents.items-2 .fridge-item-name,
+  .fridge-contents.items-3 .fridge-item-name {
+    font-size: var(--font-size-base);
   }
 }
 
-.fridge-item:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-primary);
+@media (max-width: 480px) {
+  .fridge-item {
+    min-height: 80px;
+    padding: var(--space-6);
+  }
+  
+  .fridge-contents.items-1 .fridge-item {
+    min-height: 200px;
+    padding: var(--space-16);
+  }
+  
+  .fridge-contents.items-1 .fridge-item img {
+    width: 80px;
+    height: 120px;
+    margin-bottom: var(--space-8);
+  }
+  
+  .fridge-contents.items-1 .fridge-item-name {
+    font-size: var(--font-size-lg);
+  }
 }
 
 .fridge-item img {
-  width: 64px;
-  height: 96px;
+  width: 60px;
+  height: 90px;
   object-fit: contain;
   margin-bottom: var(--space-6);
   border-radius: var(--radius-sm);
@@ -1105,25 +1219,14 @@ select.form-control {
   flex-shrink: 0;
 }
 
-/* Responsive image scaling for smaller screens */
-@media (max-width: 1024px) {
-  .fridge-item img {
-    width: 48px;
-    height: 72px;
-    margin-bottom: var(--space-4);
-  }
-}
-
-@media (max-width: 768px) {
-  .fridge-item img {
-    width: 40px;
-    height: 60px;
-    margin-bottom: var(--space-2);
-  }
+.fridge-item:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary);
 }
 
 .fridge-item-name {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-text);
   text-align: center;
@@ -1138,34 +1241,6 @@ select.form-control {
   overflow-wrap: break-word;
   hyphens: auto;
   max-width: 100%;
-}
-
-/* Responsive text scaling for fridge items */
-@media (max-width: 768px) {
-  .fridge-item-name {
-    font-size: var(--font-size-xs);
-    padding: var(--space-2);
-    margin-bottom: var(--space-2);
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1023px) {
-  .fridge-item-name {
-    font-size: var(--font-size-sm);
-    padding: var(--space-2);
-  }
-}
-
-@media (min-width: 1024px) {
-  .fridge-item-name {
-    font-size: var(--font-size-lg);
-  }
-}
-
-@media (min-width: 1280px) {
-  .fridge-item-name {
-    font-size: var(--font-size-xl);
-  }
 }
 
 .quantity-badge {
@@ -1197,14 +1272,20 @@ select.form-control {
   }
 }
 
-/* Empty Shelf State */
-.shelf-empty {
+/* Empty Fridge State */
+.fridge-empty {
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
+  min-height: 200px;
   color: var(--color-text-secondary);
   font-style: italic;
+  font-size: var(--font-size-lg);
+  text-align: center;
+  padding: var(--space-24);
 }
 
 /* Modal */
